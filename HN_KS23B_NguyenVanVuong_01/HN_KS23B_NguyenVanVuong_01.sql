@@ -333,16 +333,14 @@ after insert on payment
 for each row
 begin
     if (select payment_status from payment where payment_id = LAST_INSERT_ID()) <> 'Success' then
-		signal sqlstate '45000'
-        set message_text = 'Da cap nhat thanh cong';
+        signal sqlstate '45000' set message_text = 'cap nhat thanh cong';
     else
-		update Booking
+        update Booking
         set Booking.booking_status = 'Confirmed'
-        where (select booking_id from payment where payment_id = LAST_INSERT_ID()) = Booking.booking_id
-	end if;
+        where Booking.booking_id = (select booking_id from payment where payment_id = LAST_INSERT_ID());
+    end if;
 end;
-//
-delimiter ;
+// delimiter ;
 
 
 -- PHAN 7
